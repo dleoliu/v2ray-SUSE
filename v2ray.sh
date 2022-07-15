@@ -148,6 +148,8 @@ checkSys() {
         PACKAGE_MANAGER='dnf'
     elif [[ `command -v yum` ]];then
         PACKAGE_MANAGER='yum'
+    elif [[ `command -v zypper` ]];then
+        PACKAGE_MANAGER='zypper'
     else
         colorEcho $RED "Not support OS!"
         exit 1
@@ -158,13 +160,20 @@ checkSys() {
 installDependent(){
     if [[ ${PACKAGE_MANAGER} == 'dnf' || ${PACKAGE_MANAGER} == 'yum' ]];then
         ${PACKAGE_MANAGER} install socat crontabs bash-completion which -y
+    elif [[ ${PACKAGE_MANAGER} == 'zypper' ]];then
+        ${PACKAGE_MANAGER} ref
+        ${PACKAGE_MANAGER} in -y socat cron bash-completion gawk which
     else
         ${PACKAGE_MANAGER} update
         ${PACKAGE_MANAGER} install socat cron bash-completion ntpdate gawk -y
     fi
 
     #install python3 & pip
-    source <(curl -sL https://python3.netlify.app/install.sh)
+    if [[ ${PACKAGE_MANAGER} == 'zypper' ]];then
+        ${PACKAGE_MANAGER} in -y python3 python3-pip
+    else
+        source <(curl -sL https://python3.netlify.app/install.sh)
+    fi
 }
 
 updateProject() {

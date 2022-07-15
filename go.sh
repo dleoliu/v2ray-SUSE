@@ -210,7 +210,7 @@ installSoftware(){
 
     getPMT
     if [[ $? -eq 1 ]]; then
-        colorEcho ${RED} "The system package manager tool isn't APT or YUM, please install ${COMPONENT} manually."
+        colorEcho ${RED} "The system package manager tool isn't APT or YUM or ZYPPER, please install ${COMPONENT} manually."
         return 1
     fi
     if [[ $SOFTWARE_UPDATED -eq 0 ]]; then
